@@ -5,10 +5,10 @@ ENV USER_NAME=myuser
 ENV USER_PASSWORD=password
 ENV HOME=/home/${USER_NAME}
 
-# Update package and install git, vim, sudo
+# Update package and install git, vim, sudo, words
 RUN set -ex && \
     dnf -y update && \
-    dnf -y install vim git sudo && \
+    dnf -y install vim git sudo words && \
     dnf clean all
 
 # Create user and set password
