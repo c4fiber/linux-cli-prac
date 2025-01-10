@@ -24,7 +24,7 @@ TAG=$1
 DOCKERFILE=./Dockerfile
 
 # Check if version is already exist
-DOES_EXIST=$(docker image ls -a | grep hayanbada/linux-cli-prac | awk '{print $2}' | grep $TAG | wc -l)
+DOES_EXIST=$(docker image ls -a | grep $REPOSITORY | awk '{print $2}' | grep $TAG | wc -l)
 if [ $DOES_EXIST -gt 0 ]; then
 	echo "Error: version already exist"
 	exit 1
