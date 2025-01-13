@@ -1,0 +1,2 @@
+docker build --progress=plain -t my-rockylinux .
+docker run -it --name rocky my-rockylinux

@@ -1,9 +1,9 @@
 FROM rockylinux/rockylinux:9.5
 
-# Set environments
-ENV USER_NAME=myuser
-ENV USER_PASSWORD=password
-ENV HOME=/home/${USER_NAME}
+# Set Variables
+ARG USER_ID=myuser
+ARG USER_PASSWORD=password
+ENV HOME=/home/${USER_ID}
 
 # Update package and install git, vim, sudo, words
 RUN set -ex && \
@@ -13,14 +13,14 @@ RUN set -ex && \
 
 # Create user and set password
 RUN set -ex && \
-    useradd -m ${USER_NAME} && \
-    echo "${USER_NAME}:${USER_PASSWORD}" | chpasswd && \
-    echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER_NAME} && \
-    chmod 0440 /etc/sudoers.d/${USER_NAME} && \
-    chown -R ${USER_NAME}:${USER_NAME} /home/${USER_NAME}
+    useradd -m ${USER_ID} && \
+    echo "${USER_ID}:${USER_PASSWORD}" | chpasswd && \
+    echo "${USER_ID} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER_ID} && \
+    chmod 0440 /etc/sudoers.d/${USER_ID} && \
+    chown -R ${USER_ID}:${USER_ID} /home/${USER_ID}
 
 # switch user
-USER ${USER_NAME}
+USER ${USER_ID}
 
 # Download exercise files
 WORKDIR ${HOME}

@@ -1,9 +1,13 @@
 #!/bin/bash
 
-# Only 1 arguments: version number
-if [ $# -ne 1 ]; then
-	echo "usage: ./build.sh <version>"
+# more than 1 arguments
+if [ $# -lt 1 ]; then
+	echo "usage: ./build.sh <version> [user_id:user_password]"
 	exit 1
+elif [ ! -z $2 ]; then
+	USER_ID=$(echo $2 | cut -d':' -f1)
+	USER_PASSWORD=$(echo $2 | cut -d':' -f2)
+	echo "id: $USER_ID, pw: $USER_PASSWORD"
 fi
 
 # Is it demical number?
@@ -13,33 +17,36 @@ if ! [[ $1 =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
 fi
 
 # Is Dockerfile exist?
-if [ ! -f $DOCKERFILE ]; then
-        echo "Error: Dockerfile is not exist"
-        exit 1
+if [ ! -f ./Dockerfile ]; then
+	echo "Error: Dockerfile is not exist"
+	exit 1
 fi
 
-# Variables
-REPOSITORY=hayanbada/linux-cli-prac
+
+# load secret file
+if [ -f secret.txt ]; then
+	source secret.txt
+fi
+# set variables
 TAG=$1
-DOCKERFILE=./Dockerfile
 
 # Check if version is already exist
-DOES_EXIST=$(docker image ls -a | grep $REPOSITORY | awk '{print $2}' | grep $TAG | wc -l)
-if [ $DOES_EXIST -gt 0 ]; then
+docker image ls -a | grep $IMAGE_NAME | awk '{print $2}' | grep $TAG > /dev/null
+if [ $? -eq 0 ]; then
 	echo "Error: version already exist"
 	exit 1
 fi
 
-# NOTE
-# For if condition test
+# NOTE: temporary code for checking if conditions
 #echo "start build (fake)"
 #exit 0
 
 # Build image and replace latest image
 echo "====== start build ======"
-
-if [ $(docker image ls $REPOSITORY:latest | wc -l) -ne 0 ]; then
-	docker image rm $REPOSITORY:latest
-fi
-
-docker buildx build --progress=plain --platform linux/amd64,linux/arm64 -t $REPOSITORY:$TAG -t $REPOSITORY:latest --push .
+docker buildx build --progress=plain \
+  --platform linux/amd64,linux/arm64 \
+  ${USER_ID:+--build-arg USER_ID=$USER_ID} \
+  ${USER_PASSWORD:+--build-arg USER_PASSWORD=$USER_PASSWORD} \
+  -t $IMAGE_NAME:$TAG \
+  -t $IMAGE_NAME:latest \
+  --push .
