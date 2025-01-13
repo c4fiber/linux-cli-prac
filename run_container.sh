@@ -12,5 +12,5 @@ if [ "$EXISTING_CONTAINER" = "$CONTAINER_NAME" ]; then
   docker start -ai "$CONTAINER_NAME"
 else
   echo "Create new Container: $CONTAINER_NAME"
-  docker run --name "$CONTAINER_NAME" -it "$IMAGE_NAME" /
+  docker run --name "$CONTAINER_NAME" -it "$IMAGE_NAME"
 fi
