@@ -4,10 +4,6 @@
 if [ $# -lt 1 ]; then
 	echo "usage: ./build.sh <version> [user_id:user_password]"
 	exit 1
-elif [ ! -z $2 ]; then
-	USER_ID=$(echo $2 | cut -d':' -f1)
-	USER_PASSWORD=$(echo $2 | cut -d':' -f2)
-	echo "id: $USER_ID, pw: $USER_PASSWORD"
 fi
 
 # Is it demical number?
@@ -22,12 +18,8 @@ if [ ! -f ./Dockerfile ]; then
 	exit 1
 fi
 
-
-# load secret file
-if [ -f secret.txt ]; then
-	source secret.txt
-fi
-# set variables
+# Variables
+IMAGE_NAME=hayanbada/linux-cli-prac
 TAG=$1
 
 # Check if version is already exist
@@ -45,8 +37,6 @@ fi
 echo "====== start build ======"
 docker buildx build --progress=plain \
   --platform linux/amd64,linux/arm64 \
-  ${USER_ID:+--build-arg USER_ID=$USER_ID} \
-  ${USER_PASSWORD:+--build-arg USER_PASSWORD=$USER_PASSWORD} \
   -t $IMAGE_NAME:$TAG \
   -t $IMAGE_NAME:latest \
   --push .
