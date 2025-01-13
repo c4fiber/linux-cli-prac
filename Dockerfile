@@ -21,9 +21,9 @@ RUN set -ex && \
 
 # switch user
 USER ${USER_ID}
+WORKDIR ${HOME}
 
 # Download exercise files
-WORKDIR ${HOME}
 RUN git clone https://github.com/gilbutITbook/080342.git efficient_linux_at_the_command_line
 
 CMD ["/bin/bash"]
